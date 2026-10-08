@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JobFilter MVP
 
-## Getting Started
+컴공 맞춤 취업지원 포털 — 핵심 가설(탐색→매칭→코칭→관리) 검증용 최소 제품.
+로그인 없이 데모 사용자 데이터로 즉시 체험 가능합니다.
 
-First, run the development server:
+## 실행
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build && npm start   # 프로덕션
+npm test           # vitest — 채점/매칭/히트맵 회귀 테스트 22건
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 화면 (4개)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| 경로 | 기능 명세 | 설명 |
+|---|---|---|
+| `/` | F-10 경량 + F-11 + F-13 | 공고 검색·7종 필터·3종 정렬·페이지네이션·URL 동기화·북마크 + 대시보드 배너 |
+| `/api/listings` | F-11 | 서버 측 필터링·페이지네이션 엔드포인트 (검수 A-02) |
+| `/jobs/[id]` | F-12 + F-27 축소 | 5요소 매칭 점수(스킬50+직무15+경력10+마감10+전공15)·일치/부족 diff·프로필 패널·지원 등록 |
+| `/cover-letter` | F-15·16·17·28 + F-66 | 문항별 작성·버전 이력·7가중치 채점·키워드 히트맵·분석불가 게이트·직군 가이드 |
+| `/kanban` | F-14 + F-18 | 6단계 드래그 칸반(서류준비→지원완료→서류합격→면접예정→최종합격/불합격)·상태 이력·중복 차단 |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 구조
 
-## Learn More
+- `lib/seed.ts` — 공고 24건·스킬 풀·직군별 가이드·데모 프로필 (DB 없이 시드 데이터)
+- `lib/logic.ts` — 순수 도메인 로직: 매칭 점수·자소서 채점·히트맵(단어 경계)·분석불가 판정
+- `lib/store.tsx` — localStorage 영속 데모 스토어 (프로필·북마크·지원·자소서)
+- `lib/types.ts` — `KANBAN_STAGES`, `RUBRIC`(7개 가중치표) 등 도메인 상수
 
-To learn more about Next.js, take a look at the following resources:
+## 채점 규격 (명세 고정)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+STAR 25 / 직군키워드 20 / 수치·성과 15 / 표현력 15 / 분량 10 / 문장길이 10 / 협업 5 = 100점.
+의미 없는 입력(자모 반복·유효 단어·문자 비율 미달)은 '분석 불가'로 차단.
+`Java`는 `JavaScript`와 매칭되지 않음(단어 경계).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Vercel 배포
 
-## Deploy on Vercel
+```bash
+npm i -g vercel
+vercel        # 프리뷰
+vercel --prod # 프로덕션
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+또는 GitHub에 push 후 vercel.com에서 "Import Project" → 프레임워크 자동 감지(Next.js) → Deploy.
+별도 환경변수·DB 설정 불필요(클라이언트 시드 데이터).
