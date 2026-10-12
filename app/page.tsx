@@ -128,7 +128,7 @@ function ListingInner() {
             CS 특화 맞춤 공고 탐색
           </div>
           <h1 className="font-headline text-[24px] font-bold text-on-surface tracking-tight">
-            채용공고 탐색 <span className="font-mono text-[15px] text-secondary font-semibold">(총 {JOBS.length}개의 IT/SW 채용공고)</span>
+            채용공고 탐색 <span className="font-mono text-[15px] text-secondary font-semibold">(총 {result?.total ?? JOBS.length}개의 IT/SW 채용공고)</span>
           </h1>
         </div>
         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-tertiary-fixed/60 text-on-tertiary-fixed text-[11px] font-bold">
